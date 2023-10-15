@@ -13,6 +13,7 @@
         <module>common-lock</module>
         <module>common-rpc</module>
         <module>common-crawl</module>
+        <module>common-web</module>
     </modules>
 
     <properties>
