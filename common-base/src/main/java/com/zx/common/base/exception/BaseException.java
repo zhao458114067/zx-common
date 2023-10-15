@@ -4,7 +4,7 @@ import lombok.Data;
 import lombok.EqualsAndHashCode;
 
 /**
- * @author KuiChi
+ * @author ZhaoXu
  * @date 2022/6/3 23:18
  */
 @EqualsAndHashCode(callSuper = true)
@@ -13,8 +13,6 @@ public class BaseException extends RuntimeException {
     private static final long serialVersionUID = -1818626802303482513L;
 
     private Integer code;
-
-    private String message;
 
     public BaseException(Integer code, String message) {
         super(message);

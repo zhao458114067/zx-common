@@ -1,9 +1,11 @@
 package com.zx.common.lock.aspect;
 
 import com.zx.common.lock.annotation.RedisLock;
+import com.zx.common.lock.exception.RedLockException;
 import com.zx.common.lock.redlock.RedLock;
 import com.zx.common.base.utils.AopHelper;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.ObjectUtils;
 import org.aspectj.lang.ProceedingJoinPoint;
 import org.aspectj.lang.annotation.Around;
 import org.aspectj.lang.annotation.Aspect;
@@ -11,6 +13,7 @@ import org.springframework.stereotype.Component;
 import redis.clients.jedis.Jedis;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.UUID;
 
@@ -46,6 +49,9 @@ public class RedisLockAspect {
     }
 
     private List<RedLock> buildRedLocks(String lockKey) {
+        if (ObjectUtils.isEmpty(jedisList)) {
+            throw new RedLockException("redis节点列表为空");
+        }
         List<RedLock> redLockList = new ArrayList<>();
         int offset = lockKey.hashCode() & (slotCountSum - 1);
         // redis槽间隔
