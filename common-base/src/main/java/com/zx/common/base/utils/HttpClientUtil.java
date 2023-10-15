@@ -211,17 +211,4 @@ public class HttpClientUtil {
             throw new RuntimeException(e);
         }
     }
-
-    public static void main(String[] args) {
-        Map<String, Object> params = new HashMap<>();
-        params.put("name", "name");
-        params.put("uid", 12314);
-        for (int i = 0; i < 2000; i++) {
-            Thread thread = new Thread(() -> {
-                Map post = post("http://localhost:8079/controller/test", params, Map.class);
-                System.out.println(post);
-            });
-            thread.start();
-        }
-    }
 }
