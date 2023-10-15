@@ -1,5 +1,6 @@
 package com.zx.common.lock.aspect;
 
+import com.sun.org.apache.bcel.internal.generic.BREAKPOINT;
 import com.zx.common.lock.annotation.RedisLock;
 import com.zx.common.lock.exception.RedLockException;
 import com.zx.common.lock.redlock.RedLock;
@@ -74,7 +75,7 @@ public class RedisLockAspect {
 
         // 上锁成功节点数
         int successCount = 0;
-        while (redisLock.waitTime() <= 0 || System.currentTimeMillis() - startTime < redisLock.waitTime()) {
+        while (checkoutWaitTimeOut(redisLock.waitTime(), startTime)) {
             // 这一批开始上锁时间
             long batchStartTime = System.currentTimeMillis();
             for (RedLock redLock : redLockList) {
@@ -83,9 +84,6 @@ public class RedisLockAspect {
                 }
                 // 到达等待时间
                 if (redisLock.waitTime() > 0 && System.currentTimeMillis() - startTime >= redisLock.waitTime()) {
-                    if (successCount < minCount) {
-                        log.warn("lock timeout, redisLock:{}", redisLock);
-                    }
                     break;
                 }
             }
@@ -94,10 +92,18 @@ public class RedisLockAspect {
                 return true;
             }
             unlock(redLockList);
+            if (!checkoutWaitTimeOut(redisLock.waitTime(), startTime - 10L)) {
+                break;
+            }
             successCount = 0;
             Thread.sleep(10L);
         }
-        return false;
+        log.error("lock timeout, redisLock:{}", redisLock);
+        throw new RedLockException("red lock timeout, please retry!");
+    }
+
+    private boolean checkoutWaitTimeOut(long waitTime, long startTime) {
+        return waitTime <= 0 || System.currentTimeMillis() - startTime < waitTime;
     }
 
     private void unlock(List<RedLock> redLockList) {
