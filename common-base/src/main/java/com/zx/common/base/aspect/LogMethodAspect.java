@@ -118,7 +118,7 @@ public class LogMethodAspect {
                 }
             }
             DETAIL_MESSAGE_FIELD.set(throwable, logAround.detailMessage());
-            businessException = (BaseException) subClass.getConstructor(String.class, int.class, Throwable.class).newInstance(logAround.detailMessage(), ErrorCode.BUSINESS_EXCEPTION.getCode(), throwable);
+            businessException = (BaseException) subClass.getConstructor(int.class, String.class, Throwable.class).newInstance(ErrorCode.BUSINESS_EXCEPTION.getCode(), logAround.detailMessage(), throwable);
         } catch (Exception ex) {
             log.error("getException error", ex);
             businessException = new BaseException(ErrorCode.BUSINESS_EXCEPTION.getCode(), ErrorCode.BUSINESS_EXCEPTION.getDesc(), throwable);
