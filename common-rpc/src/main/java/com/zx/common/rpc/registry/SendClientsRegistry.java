@@ -1,7 +1,7 @@
 package com.zx.common.rpc.registry;
 
-import com.zx.common.rpc.annotation.EnableSendClients;
-import com.zx.common.rpc.annotation.SendClient;
+import com.zx.common.rpc.annotation.EnableHttpRequest;
+import com.zx.common.rpc.annotation.RequestClient;
 import org.springframework.beans.factory.annotation.AnnotatedBeanDefinition;
 import org.springframework.beans.factory.config.BeanDefinition;
 import org.springframework.beans.factory.config.BeanDefinitionHolder;
@@ -31,7 +31,7 @@ public class SendClientsRegistry extends ClassPathScanningCandidateComponentProv
     public void registerBeanDefinitions(AnnotationMetadata importingClassMetadata, BeanDefinitionRegistry registry) {
         // 获取MapperScan注解的属性属性
         AnnotationAttributes mapperScanAttrs = AnnotationAttributes
-                .fromMap(importingClassMetadata.getAnnotationAttributes(EnableSendClients.class.getName()));
+                .fromMap(importingClassMetadata.getAnnotationAttributes(EnableHttpRequest.class.getName()));
         if (mapperScanAttrs != null) {
             String packageName = ClassUtils.getPackageName(importingClassMetadata.getClassName());
             Set<BeanDefinition> classesWithMethodAnnotation = findClassesWithMethodAnnotation(RequestMapping.class, packageName);
@@ -50,7 +50,7 @@ public class SendClientsRegistry extends ClassPathScanningCandidateComponentProv
     }
 
     public Set<BeanDefinition> findClassesWithMethodAnnotation(Class<? extends Annotation> annotation, String basePackage) {
-        this.addIncludeFilter((metadataReader, metadataReaderFactory) -> metadataReader.getAnnotationMetadata().getAnnotationTypes().contains(SendClient.class.getName()));
+        this.addIncludeFilter((metadataReader, metadataReaderFactory) -> metadataReader.getAnnotationMetadata().getAnnotationTypes().contains(RequestClient.class.getName()));
         Set<BeanDefinition> beanDefinitions = findCandidateComponents(basePackage);
         return beanDefinitions.stream().filter(item -> {
             Class<?> clazz = null;

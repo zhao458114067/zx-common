@@ -1,7 +1,7 @@
 package com.zx.common.rpc.registry;
 
 import com.fasterxml.jackson.databind.JavaType;
-import com.zx.common.rpc.annotation.SendClient;
+import com.zx.common.rpc.annotation.RequestClient;
 import com.zx.common.rpc.plugin.BeforeSendPlugin;
 import com.zx.common.base.utils.HttpClientUtil;
 import com.zx.common.base.utils.JsonUtils;
@@ -40,8 +40,8 @@ public class SendClientHandler<T> implements InvocationHandler {
 
     @Override
     public Object invoke(Object proxy, Method method, Object[] args) {
-        SendClient sendClient = mapperInterface.getAnnotation(SendClient.class);
-        String[] domains = sendClient.value();
+        RequestClient requestClient = mapperInterface.getAnnotation(RequestClient.class);
+        String[] domains = requestClient.value();
         if (ObjectUtils.isEmpty(domains)) {
             return proxy;
         }

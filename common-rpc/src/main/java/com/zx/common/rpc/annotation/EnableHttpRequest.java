@@ -16,5 +16,5 @@ import java.lang.annotation.Target;
 @Retention(RetentionPolicy.RUNTIME)
 @Documented
 @Import({SendClientsRegistry.class})
-public @interface EnableSendClients {
+public @interface EnableHttpRequest {
 }

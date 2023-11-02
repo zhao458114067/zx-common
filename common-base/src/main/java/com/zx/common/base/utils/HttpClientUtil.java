@@ -38,6 +38,7 @@ public class HttpClientUtil {
     private static final Logger log = LoggerFactory.getLogger(HttpClientUtil.class);
     private static final RequestConfig requestConfig;
     private static final CloseableHttpClient httpClient;
+    private static final PoolingHttpClientConnectionManager cm;
 
     static {
         LayeredConnectionSocketFactory sslsf = null;
@@ -52,7 +53,7 @@ public class HttpClientUtil {
                 .register("http", new PlainConnectionSocketFactory())
                 .build();
 
-        PoolingHttpClientConnectionManager cm = new PoolingHttpClientConnectionManager(socketFactoryRegistry);
+        cm = new PoolingHttpClientConnectionManager(socketFactoryRegistry);
         cm.setMaxTotal(Runtime.getRuntime().availableProcessors() * 2);
         cm.setDefaultMaxPerRoute(Runtime.getRuntime().availableProcessors() * 2);
 
@@ -202,7 +203,10 @@ public class HttpClientUtil {
     }
 
     private static <T> T executeRequest(HttpRequestBase httpRequestBase, Class<T> tClass) {
-        try (CloseableHttpResponse closeableHttpResponse = httpClient.execute(httpRequestBase)) {
+        try (CloseableHttpClient httpClient = HttpClients.custom()
+                .setConnectionManager(cm)
+                .build()) {
+            CloseableHttpResponse closeableHttpResponse = httpClient.execute(httpRequestBase);
             HttpEntity entity = closeableHttpResponse.getEntity();
             String resposneString = EntityUtils.toString(entity);
             return JsonUtils.fromJson(resposneString, tClass);

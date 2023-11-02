@@ -15,7 +15,7 @@ import java.lang.annotation.Target;
 @Retention(RetentionPolicy.RUNTIME)
 @Service
 @Documented
-public @interface SendClient {
+public @interface RequestClient {
     /**
      * 请求域名，设置多个可负载均衡
      *

@@ -17,8 +17,8 @@ import java.lang.reflect.Method;
 import java.lang.reflect.Type;
 
 /**
- * @author bifang
- * @date 2018/9/10
+ * @author ZhaoXu
+ * @date 2022/9/10
  */
 public final class JsonUtils {
     static final ObjectMapper OBJECT_MAPPER = defaultMapper();
