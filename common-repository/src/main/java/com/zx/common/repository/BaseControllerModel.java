@@ -41,8 +41,9 @@ public class BaseControllerModel<S, E> implements ApplicationRunner {
 
     @RequestMapping(path = "", method = RequestMethod.POST)
     @ModelMapping
+    @ApiOperation(value = "新增", notes = "")
     @Transactional(rollbackFor = Exception.class)
-    public synchronized void add(@RequestBody S entityVO) {
+    public void add(@RequestBody S entityVO) {
         E entity = BaseConverter.convert(entityVO, (Class<E>) actualTypeArguments[1]);
         try {
             ReflectUtil.setValue(entity, "valid", 1);
@@ -55,6 +56,7 @@ public class BaseControllerModel<S, E> implements ApplicationRunner {
 
     @RequestMapping(path = "", method = RequestMethod.PUT)
     @ModelMapping
+    @ApiOperation(value = "更新", notes = "必须传数据库id值")
     @Transactional(rollbackFor = Exception.class)
     public void update(@RequestBody S entityVO) {
         E entity = BaseConverter.convert(entityVO, (Class<E>) actualTypeArguments[1]);
