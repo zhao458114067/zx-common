@@ -1,7 +1,7 @@
 package com.zx.common.base.utils;
 
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.util.ObjectUtils;
+import org.apache.commons.lang3.ObjectUtils;
 
 import java.io.File;
 import java.lang.reflect.Method;
@@ -38,9 +38,7 @@ public class ClassLoadUtils {
                 try {
                     URL url = file.toURI().toURL();
                     method.invoke(classLoader, url);
-                    log.info("load jar，name：{}，success", file.getName());
                 } catch (Exception e) {
-                    log.info("load jar，name：{}，fail", file.getName());
                     throw new RuntimeException(e);
                 }
             }

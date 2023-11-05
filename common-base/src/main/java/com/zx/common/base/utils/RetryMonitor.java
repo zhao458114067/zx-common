@@ -1,5 +1,6 @@
 package com.zx.common.base.utils;
 
+import lombok.Data;
 import org.apache.commons.lang3.concurrent.BasicThreadFactory;
 import org.apache.commons.lang3.tuple.Pair;
 import org.slf4j.Logger;
@@ -22,45 +23,55 @@ public class RetryMonitor {
         void execute();
     }
 
+    @Data
+    private static class RetryBO {
+        private Execute execute;
+
+        private Integer retryCount;
+    }
+
     private static final Logger log = LoggerFactory.getLogger(RetryMonitor.class);
 
-    private static final BlockingQueue<Pair<Execute, Integer>> failedQueue = new LinkedBlockingQueue<>();
+    private static final BlockingQueue<Pair<RetryBO, Integer>> FAILED_QUEUE = new LinkedBlockingQueue<>();
 
-    private static final ScheduledExecutorService retryTaskExecutor = new ScheduledThreadPoolExecutor(1,
-            new BasicThreadFactory.Builder().namingPattern("retryTaskExecutor").
-                    daemon(true)
-                    .build());
+    private static final ScheduledExecutorService RETRY_TASK_EXECUTOR = new ScheduledThreadPoolExecutor(1,
+            new BasicThreadFactory.Builder().namingPattern("retryTaskExecutor").build());
 
     static {
-        retryTaskExecutor.scheduleAtFixedRate(() -> {
-            Pair<Execute, Integer> take = null;
+        RETRY_TASK_EXECUTOR.scheduleAtFixedRate(() -> {
+            Pair<RetryBO, Integer> take = null;
             try {
-                take = failedQueue.take();
+                take = FAILED_QUEUE.take();
             } catch (InterruptedException e) {
                 throw new RuntimeException(e);
             }
 
-            Execute key = take.getKey();
+            RetryBO retryBO = take.getKey();
+            Execute execute = retryBO.getExecute();
+            Integer retryCount = retryBO.getRetryCount();
             try {
-                key.execute();
+                execute.execute();
             } catch (Exception e) {
                 Integer failedNumber = take.getValue();
                 log.error("重试第 {} 次失败", ++failedNumber, e);
-                if (failedNumber < 3) {
-                    failedQueue.offer(Pair.of(key, failedNumber));
+                if (failedNumber < retryCount) {
+                    FAILED_QUEUE.offer(Pair.of(retryBO, failedNumber));
                 }
             }
-        }, 5, 15, TimeUnit.SECONDS);
+        }, 5, 5, TimeUnit.SECONDS);
     }
 
-    public static void registry(Execute retryFunction) {
+    public static void registry(Execute retryFunction, Integer retryCount) {
         if (Objects.isNull(retryFunction)) {
             return;
         }
         try {
             retryFunction.execute();
         } catch (Exception e) {
-            failedQueue.offer(Pair.of(retryFunction, 1));
+            RetryBO retryBO = new RetryBO();
+            retryBO.setRetryCount(retryCount);
+            retryBO.setExecute(retryFunction);
+            FAILED_QUEUE.offer(Pair.of(retryBO, 1));
             log.error("执行 1/3 失败，进入重试队列", e);
         }
     }

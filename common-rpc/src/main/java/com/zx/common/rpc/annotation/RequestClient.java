@@ -17,9 +17,16 @@ import java.lang.annotation.Target;
 @Documented
 public @interface RequestClient {
     /**
-     * 请求域名，设置多个可负载均衡
+     * spring环境变量
      *
      * @return
      */
-    String[] value() default "http://localhost:8080";
+    String value() default "";
+
+    /**
+     * 请求域名
+     *
+     * @return
+     */
+    String[] domains() default {"http://localhost:8080"};
 }

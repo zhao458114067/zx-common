@@ -1,4 +1,4 @@
-package com.zx.common.web.response;
+package com.zx.common.base.model;
 
 import lombok.Data;
 
@@ -41,5 +41,9 @@ public class BaseResponse<T> implements Serializable {
 
     public static <T> BaseResponse<T> success(T data) {
         return new BaseResponse<>(data);
+    }
+
+    public static BaseResponse<Void> successVoid() {
+        return new BaseResponse<>();
     }
 }

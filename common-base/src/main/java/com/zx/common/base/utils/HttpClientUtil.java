@@ -203,15 +203,12 @@ public class HttpClientUtil {
     }
 
     private static <T> T executeRequest(HttpRequestBase httpRequestBase, Class<T> tClass) {
-        try (CloseableHttpClient httpClient = HttpClients.custom()
-                .setConnectionManager(cm)
-                .build()) {
-            CloseableHttpResponse closeableHttpResponse = httpClient.execute(httpRequestBase);
+        try (CloseableHttpResponse closeableHttpResponse = httpClient.execute(httpRequestBase)) {
             HttpEntity entity = closeableHttpResponse.getEntity();
             String resposneString = EntityUtils.toString(entity);
             return JsonUtils.fromJson(resposneString, tClass);
         } catch (IOException e) {
-            log.error("接口请求异常，httpRequestBase：{}", httpRequestBase);
+            log.error("接口请求异常，httpRequestBase：{}", httpRequestBase, e);
             throw new RuntimeException(e);
         }
     }

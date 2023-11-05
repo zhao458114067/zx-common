@@ -41,7 +41,7 @@ public class SendClientHandler<T> implements InvocationHandler {
     @Override
     public Object invoke(Object proxy, Method method, Object[] args) {
         RequestClient requestClient = mapperInterface.getAnnotation(RequestClient.class);
-        String[] domains = requestClient.value();
+        String[] domains = requestClient.domains();
         if (ObjectUtils.isEmpty(domains)) {
             return proxy;
         }
@@ -104,7 +104,7 @@ public class SendClientHandler<T> implements InvocationHandler {
             JavaType javaType = JsonUtils.getJavaType(method);
             return JsonUtils.convertObject(result, javaType);
         }
-        return proxy;
+        return mapperInterface.toString();
     }
 
     private String getLoadBalanceUrl(String[] domains, String path, List<String> paramList) {

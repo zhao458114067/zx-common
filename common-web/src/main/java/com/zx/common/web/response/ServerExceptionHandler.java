@@ -2,8 +2,8 @@ package com.zx.common.web.response;
 
 import com.zx.common.base.enums.ErrorCode;
 import com.zx.common.base.exception.BaseException;
+import com.zx.common.base.model.BaseResponse;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.boot.autoconfigure.condition.ConditionalOnWebApplication;
 import org.springframework.context.support.DefaultMessageSourceResolvable;
 import org.springframework.http.HttpStatus;
 import org.springframework.validation.BindingResult;
@@ -20,7 +20,6 @@ import java.util.stream.Collectors;
  */
 @RestControllerAdvice
 @Slf4j
-@ConditionalOnWebApplication
 public class ServerExceptionHandler {
 
     @ExceptionHandler(Exception.class)

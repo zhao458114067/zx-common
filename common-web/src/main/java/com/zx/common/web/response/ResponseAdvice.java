@@ -1,5 +1,6 @@
 package com.zx.common.web.response;
 
+import com.zx.common.base.model.BaseResponse;
 import com.zx.common.base.utils.JsonUtils;
 import org.springframework.core.MethodParameter;
 import org.springframework.http.MediaType;
@@ -13,7 +14,7 @@ import org.springframework.web.servlet.mvc.method.annotation.ResponseBodyAdvice;
  * @author ZhaoXu
  * @date 2022/9/21 17:37
  */
-@RestControllerAdvice
+@RestControllerAdvice(basePackages = {"**.controller"})
 public class ResponseAdvice implements ResponseBodyAdvice<Object> {
     @Override
     public boolean supports(MethodParameter methodParameter, Class<? extends HttpMessageConverter<?>> aClass) {
