@@ -28,5 +28,5 @@ public @interface RequestClient {
      *
      * @return
      */
-    String[] domains() default {"http://localhost:8080"};
+    String[] domains() default {"http://127.0.0.1:8080"};
 }
