@@ -2,12 +2,11 @@ package com.zx.common.rpc.registry;
 
 import com.fasterxml.jackson.databind.JavaType;
 import com.zx.common.rpc.annotation.RequestClient;
-import com.zx.common.rpc.plugin.RequestConfig;
+import com.zx.common.rpc.config.RequestConfig;
 import com.zx.common.base.utils.HttpClientUtil;
 import com.zx.common.base.utils.JsonUtils;
 import com.zx.common.base.utils.SpringManager;
 import org.apache.commons.lang3.ObjectUtils;
-import org.springframework.context.ApplicationContext;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -30,20 +29,20 @@ import java.util.concurrent.atomic.AtomicInteger;
 /**
  * @author ZhaoXu
  */
-public class SendClientHandler<T> implements InvocationHandler {
+public class RequestClientHandler<T> implements InvocationHandler {
     private static final Map<String, AtomicInteger> loadBalanceMap = new ConcurrentHashMap<>();
     private final Class<T> mapperInterface;
 
-    public SendClientHandler(Class<T> mapperInterface) {
+    public RequestClientHandler(Class<T> mapperInterface) {
         this.mapperInterface = mapperInterface;
     }
 
     @Override
-    public Object invoke(Object proxy, Method method, Object[] args) {
+    public Object invoke(Object proxy, Method method, Object[] args) throws InstantiationException, IllegalAccessException {
         RequestClient requestClient = mapperInterface.getAnnotation(RequestClient.class);
         String[] domains = requestClient.domains();
         if (ObjectUtils.isEmpty(domains)) {
-            return proxy;
+            return RequestClientHandler.class.getName();
         }
         String[] pathArray;
         RequestMethod requestType;
@@ -73,7 +72,7 @@ public class SendClientHandler<T> implements InvocationHandler {
                 Parameter parameter = parameters[i];
                 if (parameter.isAnnotationPresent(RequestParam.class)) {
                     RequestParam requestParam = parameter.getAnnotation(RequestParam.class);
-                    String name = ObjectUtils.isNotEmpty(requestParam.name()) ? requestParam.name() : parameter.getName();
+                    String name = ObjectUtils.isNotEmpty(requestParam.value()) ? requestParam.value() : parameter.getName();
                     String value = String.valueOf(args[i]);
                     paramList.add(name + "=" + value);
                 } else if (parameter.isAnnotationPresent(RequestBody.class)) {
@@ -82,8 +81,8 @@ public class SendClientHandler<T> implements InvocationHandler {
             }
             String url = getLoadBalanceUrl(domains, pathArray[0], paramList);
             Map<String, Object> headers = new HashMap<>(8);
-            Class<?> config = requestClient.config();
-            RequestConfig requestConfig = (RequestConfig) SpringManager.getBean(config.getName());
+            Class<RequestConfig> config = (Class<RequestConfig>) requestClient.config();
+            RequestConfig requestConfig = SpringManager.getBean(config);
             requestConfig.invoke(headers, url, paramsBody);
             Object result = null;
             // 发送请求
@@ -106,7 +105,7 @@ public class SendClientHandler<T> implements InvocationHandler {
             JavaType javaType = JsonUtils.getJavaType(method);
             return JsonUtils.convertObject(result, javaType);
         }
-        return mapperInterface.toString();
+        return RequestClientHandler.class.getName();
     }
 
     private String getLoadBalanceUrl(String[] domains, String path, List<String> paramList) {
@@ -114,6 +113,6 @@ public class SendClientHandler<T> implements InvocationHandler {
             path = (path.endsWith("?") ? path : (path + "?")) + String.join("&", paramList);
         }
         int random = loadBalanceMap.computeIfAbsent(mapperInterface.getName(), (key) -> new AtomicInteger(-1)).incrementAndGet();
-        return domains[random % domains.length] + "/" + path;
+        return domains[random % domains.length] + path;
     }
 }

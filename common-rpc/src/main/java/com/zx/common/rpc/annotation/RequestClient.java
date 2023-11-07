@@ -1,6 +1,7 @@
 package com.zx.common.rpc.annotation;
 
-import com.zx.common.rpc.plugin.DefaultConfiguration;
+import com.zx.common.rpc.config.DefaultConfiguration;
+import com.zx.common.rpc.config.RequestConfig;
 import org.springframework.stereotype.Service;
 
 import java.lang.annotation.Documented;
@@ -18,11 +19,11 @@ import java.lang.annotation.Target;
 @Documented
 public @interface RequestClient {
     /**
-     * spring环境变量
+     * spring环境变量，例 spring.server.url，为空时使用 domains 属性
      *
      * @return
      */
-    String value() default "";
+    String domainEnvironment() default "";
 
     /**
      * 请求域名

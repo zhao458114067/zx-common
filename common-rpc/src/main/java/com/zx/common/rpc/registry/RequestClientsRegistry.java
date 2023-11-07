@@ -1,9 +1,7 @@
 package com.zx.common.rpc.registry;
 
-import com.zx.common.base.utils.SpringManager;
 import com.zx.common.rpc.annotation.EnableHttpRequest;
 import com.zx.common.rpc.annotation.RequestClient;
-import org.apache.commons.lang3.ObjectUtils;
 import org.springframework.beans.factory.annotation.AnnotatedBeanDefinition;
 import org.springframework.beans.factory.config.BeanDefinition;
 import org.springframework.beans.factory.config.BeanDefinitionHolder;
@@ -11,7 +9,6 @@ import org.springframework.beans.factory.support.BeanDefinitionReaderUtils;
 import org.springframework.beans.factory.support.BeanDefinitionRegistry;
 import org.springframework.beans.factory.support.BeanNameGenerator;
 import org.springframework.beans.factory.support.GenericBeanDefinition;
-import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.AnnotationBeanNameGenerator;
 import org.springframework.context.annotation.ClassPathScanningCandidateComponentProvider;
 import org.springframework.context.annotation.ImportBeanDefinitionRegistrar;
@@ -29,7 +26,7 @@ import java.util.stream.Collectors;
 /**
  * @author ZhaoXu
  */
-public class SendClientsRegistry extends ClassPathScanningCandidateComponentProvider implements ImportBeanDefinitionRegistrar {
+public class RequestClientsRegistry extends ClassPathScanningCandidateComponentProvider implements ImportBeanDefinitionRegistrar {
     @Override
     public void registerBeanDefinitions(AnnotationMetadata importingClassMetadata, BeanDefinitionRegistry registry) {
         // 获取MapperScan注解的属性属性
@@ -45,7 +42,7 @@ public class SendClientsRegistry extends ClassPathScanningCandidateComponentProv
                 BeanDefinitionHolder definitionHolder = new BeanDefinitionHolder(beanDefinition, beanName);
                 this.registerBeanDefinition(definitionHolder, registry);
                 genericBeanDefinition.getConstructorArgumentValues().addGenericArgumentValue(Objects.requireNonNull(genericBeanDefinition.getBeanClassName()));
-                genericBeanDefinition.setBeanClass(SendClientFactoryBean.class);
+                genericBeanDefinition.setBeanClass(RequestClientFactoryBean.class);
                 genericBeanDefinition.setAutowireMode(2);
                 genericBeanDefinition.setLazyInit(true);
             }

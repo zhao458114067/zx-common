@@ -1,6 +1,6 @@
 package com.zx.common.rpc.annotation;
 
-import com.zx.common.rpc.registry.SendClientsRegistry;
+import com.zx.common.rpc.registry.RequestClientsRegistry;
 import org.springframework.context.annotation.Import;
 
 import java.lang.annotation.Documented;
@@ -15,6 +15,6 @@ import java.lang.annotation.Target;
 @Target({ElementType.TYPE})
 @Retention(RetentionPolicy.RUNTIME)
 @Documented
-@Import({SendClientsRegistry.class})
+@Import({RequestClientsRegistry.class})
 public @interface EnableHttpRequest {
 }

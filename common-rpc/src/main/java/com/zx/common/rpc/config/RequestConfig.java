@@ -1,4 +1,4 @@
-package com.zx.common.rpc.plugin;
+package com.zx.common.rpc.config;
 
 import java.util.Map;
 

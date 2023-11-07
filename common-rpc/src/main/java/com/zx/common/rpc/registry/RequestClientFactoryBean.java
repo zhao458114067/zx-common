@@ -7,16 +7,16 @@ import java.lang.reflect.Proxy;
 /**
  * @author ZhaoXu
  */
-public class SendClientFactoryBean implements FactoryBean<Object> {
+public class RequestClientFactoryBean implements FactoryBean<Object> {
     private final Class<Object> mapperInterface;
 
-    public SendClientFactoryBean(Class<Object> mapperInterface) {
+    public RequestClientFactoryBean(Class<Object> mapperInterface) {
         this.mapperInterface = mapperInterface;
     }
 
     @Override
     public Object getObject() {
-        SendClientHandler<Object> testHandler = new SendClientHandler<>(mapperInterface);
+        RequestClientHandler<Object> testHandler = new RequestClientHandler<>(mapperInterface);
         return Proxy.newProxyInstance(mapperInterface.getClassLoader(), new Class[]{mapperInterface}, testHandler);
     }
 
