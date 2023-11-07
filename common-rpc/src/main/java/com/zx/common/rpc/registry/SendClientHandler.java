@@ -2,7 +2,7 @@ package com.zx.common.rpc.registry;
 
 import com.fasterxml.jackson.databind.JavaType;
 import com.zx.common.rpc.annotation.RequestClient;
-import com.zx.common.rpc.plugin.BeforeSendPlugin;
+import com.zx.common.rpc.plugin.RequestConfig;
 import com.zx.common.base.utils.HttpClientUtil;
 import com.zx.common.base.utils.JsonUtils;
 import com.zx.common.base.utils.SpringManager;
@@ -82,7 +82,9 @@ public class SendClientHandler<T> implements InvocationHandler {
             }
             String url = getLoadBalanceUrl(domains, pathArray[0], paramList);
             Map<String, Object> headers = new HashMap<>(8);
-            executeBeforePlugin(paramsBody, url, headers);
+            Class<?> config = requestClient.config();
+            RequestConfig requestConfig = (RequestConfig) SpringManager.getBean(config.getName());
+            requestConfig.invoke(headers, url, paramsBody);
             Object result = null;
             // 发送请求
             switch (requestType) {
@@ -113,14 +115,5 @@ public class SendClientHandler<T> implements InvocationHandler {
         }
         int random = loadBalanceMap.computeIfAbsent(mapperInterface.getName(), (key) -> new AtomicInteger(-1)).incrementAndGet();
         return domains[random % domains.length] + "/" + path;
-    }
-
-    private void executeBeforePlugin(Object paramsBody, String url, Map<String, Object> headers) {
-        ApplicationContext context = SpringManager.getApplicationContext();
-        String[] beanNames = context.getBeanNamesForType(BeforeSendPlugin.class);
-        for (String beanName : beanNames) {
-            BeforeSendPlugin bean = (BeforeSendPlugin) SpringManager.getBean(beanName);
-            bean.invoke(headers, url, paramsBody);
-        }
     }
 }

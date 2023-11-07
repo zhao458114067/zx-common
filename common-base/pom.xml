@@ -6,7 +6,7 @@
     <parent>
         <groupId>cn.supzx.utils</groupId>
         <artifactId>zx-common</artifactId>
-        <version>1.0-SNAPSHOT</version>
+        <version>1.0.0</version>
     </parent>
 
     <artifactId>common-base</artifactId>

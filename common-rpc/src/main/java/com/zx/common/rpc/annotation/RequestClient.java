@@ -1,5 +1,6 @@
 package com.zx.common.rpc.annotation;
 
+import com.zx.common.rpc.plugin.DefaultConfiguration;
 import org.springframework.stereotype.Service;
 
 import java.lang.annotation.Documented;
@@ -29,4 +30,10 @@ public @interface RequestClient {
      * @return
      */
     String[] domains() default {"http://127.0.0.1:8080"};
+
+    /**
+     * 配置类
+     * @return
+     */
+    Class<?> config() default DefaultConfiguration.class;
 }

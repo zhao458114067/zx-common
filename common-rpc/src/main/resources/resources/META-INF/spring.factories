@@ -1,2 +1,2 @@
 org.springframework.boot.autoconfigure.EnableAutoConfiguration=\
-    com.zx.common.rpc.processor.ServiceBeanPostProcessor
+    com.zx.common.rpc.CommonRpcAutoConfiguration
