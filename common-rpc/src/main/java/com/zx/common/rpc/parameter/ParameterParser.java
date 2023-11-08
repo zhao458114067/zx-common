@@ -27,20 +27,15 @@ public class ParameterParser {
         StringBuilder pathBuilder = new StringBuilder((path.endsWith("?") ? path : (path + "?")));
         Parameter[] parameters = method.getParameters();
         for (int i = 0; i < parameters.length; i++) {
-            try {
-                args[i] = URLEncoder.encode(Optional.ofNullable(args[i]).map(String::valueOf).orElse(""), StandardCharsets.UTF_8.name());
-            } catch (UnsupportedEncodingException e) {
-                args[i] = "";
-            }
             Parameter parameter = parameters[i];
             if (parameter.isAnnotationPresent(RequestParam.class)) {
                 RequestParam requestParam = parameter.getAnnotation(RequestParam.class);
                 if (Map.class.isAssignableFrom(parameter.getType())) {
                     ((Map<String, Object>) args[i]).forEach((k, v) -> {
-                        pathBuilder.append(k).append("=").append(v).append("&");
+                        pathBuilder.append(k).append("=").append(urlEncode(v)).append("&");
                     });
                 } else {
-                    pathBuilder.append(requestParam.value()).append("=").append(args[i]).append("&");
+                    pathBuilder.append(requestParam.value()).append("=").append(urlEncode(args[i])).append("&");
                 }
             } else if (parameter.isAnnotationPresent(PathVariable.class)) {
                 PathVariable pathVariable = parameter.getAnnotation(PathVariable.class);
@@ -48,11 +43,20 @@ public class ParameterParser {
                 String replaceStr = "{" + paramName + "}";
                 int replaceStart = replaceStr.indexOf(replaceStr);
                 int replaceEnd = replaceStart + replaceStr.length();
-                pathBuilder.replace(replaceStart, replaceEnd, String.valueOf(args[i]));
+                pathBuilder.replace(replaceStart, replaceEnd, urlEncode(args[i]));
             } else if (parameter.isAnnotationPresent(RequestBody.class)) {
                 requestClientDTO.setRequestBody(args[i]);
             }
         }
         requestClientDTO.setPath(pathBuilder.toString());
+    }
+
+    private static String urlEncode(Object text) {
+        try {
+            text = URLEncoder.encode(Optional.ofNullable(text).map(String::valueOf).orElse(""), StandardCharsets.UTF_8.name());
+        } catch (UnsupportedEncodingException e) {
+            text = "";
+        }
+        return (String) text;
     }
 }

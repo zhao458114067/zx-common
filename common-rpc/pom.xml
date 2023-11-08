@@ -10,7 +10,7 @@
     </parent>
 
     <artifactId>common-rpc</artifactId>
-    <version>1.0.3</version>
+    <version>1.0.4</version>
 
     <properties>
         <maven.compiler.source>8</maven.compiler.source>
