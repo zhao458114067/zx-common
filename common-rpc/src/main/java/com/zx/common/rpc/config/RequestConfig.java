@@ -1,5 +1,7 @@
 package com.zx.common.rpc.config;
 
+import com.zx.common.rpc.dto.RequestClientDTO;
+
 import java.util.Map;
 
 /**
@@ -9,9 +11,7 @@ import java.util.Map;
 public interface RequestConfig {
     /**
      * 请求前同意配置类
-     * @param headers
-     * @param url
-     * @param requestBody
+     * @param requestClientDTO
      */
-    void invoke(Map<String, Object> headers, String url, Object requestBody);
+    void invoke(RequestClientDTO requestClientDTO);
 }

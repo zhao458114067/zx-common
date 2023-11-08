@@ -1,5 +1,6 @@
-package com.zx.common.rpc.registry;
+package com.zx.common.rpc.proxy;
 
+import com.zx.common.rpc.proxy.RequestClientHandler;
 import org.springframework.beans.factory.FactoryBean;
 
 import java.lang.reflect.Proxy;
@@ -16,8 +17,8 @@ public class RequestClientFactoryBean implements FactoryBean<Object> {
 
     @Override
     public Object getObject() {
-        RequestClientHandler<Object> testHandler = new RequestClientHandler<>(mapperInterface);
-        return Proxy.newProxyInstance(mapperInterface.getClassLoader(), new Class[]{mapperInterface}, testHandler);
+        RequestClientHandler<Object> requestClientHandler = new RequestClientHandler<>(mapperInterface);
+        return Proxy.newProxyInstance(mapperInterface.getClassLoader(), new Class[]{mapperInterface}, requestClientHandler);
     }
 
     @Override

@@ -1,7 +1,9 @@
 package com.zx.common.rpc.config;
 
+import com.zx.common.rpc.dto.RequestClientDTO;
 import org.springframework.context.annotation.Configuration;
 
+import java.util.HashMap;
 import java.util.Map;
 
 /**
@@ -11,7 +13,9 @@ import java.util.Map;
 @Configuration
 public class DefaultConfiguration implements RequestConfig {
     @Override
-    public void invoke(Map<String, Object> headers, String url, Object requestBody) {
+    public void invoke(RequestClientDTO requestClientDTO) {
+        Map<String, Object> headers = new HashMap<>(8);
         headers.put("Content-Type", "application/json");
+        requestClientDTO.setHeaders(headers);
     }
 }

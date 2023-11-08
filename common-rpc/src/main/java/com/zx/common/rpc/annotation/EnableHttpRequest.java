@@ -1,6 +1,6 @@
 package com.zx.common.rpc.annotation;
 
-import com.zx.common.rpc.registry.RequestClientsRegistry;
+import com.zx.common.rpc.proxy.RequestClientsRegistry;
 import org.springframework.context.annotation.Import;
 
 import java.lang.annotation.Documented;

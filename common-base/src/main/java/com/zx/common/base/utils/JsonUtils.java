@@ -8,6 +8,7 @@ import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.JavaType;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
+import com.fasterxml.jackson.databind.type.TypeFactory;
 import com.fasterxml.jackson.datatype.jdk8.Jdk8Module;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import com.fasterxml.jackson.module.paramnames.ParameterNamesModule;
@@ -70,12 +71,7 @@ public final class JsonUtils {
     }
 
     public static JavaType getJavaType(Method method) {
-        Type[] actualTypeArguments = ((ParameterizedTypeImpl) method.getGenericReturnType()).getActualTypeArguments();
-        Class<?>[] parameterTypeArray = new Class[actualTypeArguments.length];
-        for (int i = 0; i < actualTypeArguments.length; i++) {
-            parameterTypeArray[i] = (Class<?>) actualTypeArguments[i];
-        }
-        return OBJECT_MAPPER.getTypeFactory().constructParametricType(method.getReturnType(), parameterTypeArray);
+        return OBJECT_MAPPER.getTypeFactory().constructType(method.getGenericReturnType());
     }
 
     public static <T> T convertObject(Object source, JavaType javaType) {

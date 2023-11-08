@@ -1,7 +1,8 @@
-package com.zx.common.rpc.registry;
+package com.zx.common.rpc.proxy;
 
 import com.zx.common.rpc.annotation.EnableHttpRequest;
 import com.zx.common.rpc.annotation.RequestClient;
+import com.zx.common.rpc.proxy.RequestClientFactoryBean;
 import org.springframework.beans.factory.annotation.AnnotatedBeanDefinition;
 import org.springframework.beans.factory.config.BeanDefinition;
 import org.springframework.beans.factory.config.BeanDefinitionHolder;
