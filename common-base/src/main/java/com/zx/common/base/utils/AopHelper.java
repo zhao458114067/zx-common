@@ -16,19 +16,19 @@ import java.lang.reflect.Method;
 
 /**
  * @author ZhaoXu
- * @date 2022/6/13 14:49
+ * @date 2023/10/16 14:49
  */
 public class AopHelper {
     private static final Logger log = LoggerFactory.getLogger(AopHelper.class);
-    private static final ParameterNameDiscoverer nameDiscoverer = new DefaultParameterNameDiscoverer();
+    private static final ParameterNameDiscoverer NAME_DISCOVERER = new DefaultParameterNameDiscoverer();
 
     public static String parseAnnotationText(JoinPoint joinPoint, String text) throws NoSuchMethodException {
-        Assert.hasLength(text, "lock.key() cannot be empty");
+        Assert.hasLength(text, "text cannot be empty");
         if (SpelUtils.isRawExpression(text)) {
             return text;
         } else {
             Method targetMethod = getTargetMethod(joinPoint);
-            EvaluationContext context = new MethodBasedEvaluationContext(joinPoint.getTarget(), targetMethod, joinPoint.getArgs(), nameDiscoverer);
+            EvaluationContext context = new MethodBasedEvaluationContext(joinPoint.getTarget(), targetMethod, joinPoint.getArgs(), NAME_DISCOVERER);
             return String.valueOf(SpelUtils.parseExpression(text, context));
         }
     }
@@ -53,18 +53,9 @@ public class AopHelper {
         }
     }
 
-//    public static Method getInternalFallbackMethod(JoinPoint joinPoint, boolean mustStatic, String fallbackMethodName, Class<? extends Exception> eClazz) throws NoSuchMethodException {
-//        Method originMethod = getTargetMethod(joinPoint);
-//        Class<?>[] originParameterTypes = originMethod.getParameterTypes();
-//        Class<?>[] parameterTypes = (Class[]) Arrays.copyOf(originParameterTypes, originParameterTypes.length + 1);
-//        parameterTypes[parameterTypes.length - 1] = eClazz;
-//        return MethodUtils.getDeclaredMethod(mustStatic, joinPoint.getTarget().getClass(), fallbackMethodName, originMethod.getReturnType(), parameterTypes);
-//    }
-
-    public static Method getTargetMethod(JoinPoint joinPoint) throws NoSuchMethodException {
+    public static Method getTargetMethod(JoinPoint joinPoint) {
         MethodSignature signature = (MethodSignature) joinPoint.getSignature();
-        Class<?> targetClass = getTargetClass(joinPoint.getTarget());
-        return targetClass.getDeclaredMethod(signature.getName(), signature.getMethod().getParameterTypes());
+        return signature.getMethod();
     }
 
     public static Class<?> getTargetClass(Object candidate) {
